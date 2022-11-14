@@ -50,31 +50,36 @@ function App() {
     
     return {word, category}
   }, [words]);
-
   
+  const clearStages = () => {
+    setGameStage(stages[0].name);
+  }
   
   // starts secret word game
   const startGame = useCallback(() => {
     // clear all letters
-    clearLetterStates();
+     clearLetterStates();
+     clearStages();
+     
+     // pick word and pick category
+     const {category, word} = pickedWordAndCategory();
+     
+     // create an array of letter
+     let wordLetters = word.split("");
+     
+     wordLetters = wordLetters.map((l) => l.toLowerCase());
+     
+     
+     // fill states
+     setPickedCategory(category);
+     setPickedWord(word);
+     setLetters(wordLetters);
+     
+     
+     setGameStage(stages[1].name);
     
-    // pick word and pick category
-    const {category, word} = pickedWordAndCategory();
-
-    // create an array of letter
-    let wordLetters = word.split("");
-
-    wordLetters = wordLetters.map((l) => l.toLowerCase());
-    
-
-    // fill states
-    setPickedCategory(category);
-    setPickedWord(word);
-    setLetters(wordLetters);
-    
-    
-    setGameStage(stages[1].name);
   }, [pickedWordAndCategory]); 
+
   
   // process the letter input
   const verifyLetter = (letter) => {
@@ -105,6 +110,7 @@ function App() {
     setGuessedLetters([]);
     setWrongLetters([]);
   }
+
   
   // check if guesses ended
   useEffect(() => {
@@ -121,7 +127,7 @@ function App() {
     const uniqueLetters = [...new Set(letters)];
 
     // win condition
-    if(guessedLetters.length === uniqueLetters.length) {
+    if(guessedLetters.length === uniqueLetters.length && gameStage === stages[1].name) {
       // add score
       setScore((actualScore) => actualScore += 100)
 
